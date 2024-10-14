@@ -12,8 +12,17 @@ Container_Boundary(DeviceService, "Управление устройствами
   Component(DeviceRepository, "Device Repository", "Data access logic for devices")
 }
 
+Container_Boundary(TelemetryService, "Управление телеметрией") {
+  Component(TelemetryApiController, "Telemetry API Controller", "Handles telemetry API requests")
+  Component(TelemetryProcessor, "Telemetry Processor", "Processes telemetry data")
+  Component(TelemetryRepository, "Telemetry Repository", "Data access logic for telemetry")
+}
+
 Rel(ApiController, CommandHandler, "Sends commands")
 Rel(CommandHandler, DeviceStateManager, "Updates device state")
 Rel(DeviceStateManager, DeviceRepository, "Reads/Writes device data")
+
+Rel(TelemetryApiController, TelemetryProcessor, "Processes telemetry data")
+Rel(TelemetryProcessor, TelemetryRepository, "Reads/Writes telemetry data")
 
 @enduml
