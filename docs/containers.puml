@@ -1,0 +1,44 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+title "Диаграма контейнеров Умного дома"
+
+top to bottom direction
+
+Person(user, "User", "Пользователи Умным домом")
+System(SmartHomeSystem, "Умный дом", "Система управления умным домом")
+
+Container_Boundary(SmartHomeSystem, "Умный дом") {
+  Container(ApiGateway, "АПИ Шлюз", "Kusk", "Единая точка входа")
+
+  Container(DeviceService, "Управление устройствами", "Python, FastAPI", "Управляет устройствами")
+  Container(TelemetryService, "Управление телеметрией", "Python, FastAPI", "Управляет телеметрией")
+  Container(UserService, "Управление Пользователями", "Python, FastAPI", "Управляет пользователями")
+  Container(ModuleService, "Управление Модулями", "Python, FastAPI", "Управляет устройствами внешнего производителя")
+
+  ContainerDb(UserDatabase, "База данных", "PostgreSQL", "Хранит данные о пользователях")
+  ContainerDb(DeviceDatabase, "База данных", "PostgreSQL", "Хранит данные об устройсвах")
+  ContainerDb(TelemetryDatabase, "База данных", "PostgreSQL", "Хранит данные о телеметрии")
+  ContainerQueue(kafka, "Очередь сообщений", "Kafka", "")
+}
+
+System_Ext(sensors, "Устройства", "Устройства умного дома")
+System_Ext(api, "Внешнее API", "API сторонних производителей умных устройств")
+
+Rel(user, ApiGateway, "Управляет умным домом")
+Rel(ApiGateway,TelemetryService,"Запрашивает данные о температуре")
+Rel(ApiGateway,DeviceService,"Отправляет команды управления устройством")
+Rel(ApiGateway,UserService,"Управляет пользователями")
+Rel(TelemetryService,kafka,"Запрашивает данные о температуре")
+Rel(kafka,ModuleService,"Передает данные для управления внешними устройствами")
+Rel(DeviceService,kafka,"Публикует обновление статуса устройств")
+
+Rel(DeviceService,DeviceDatabase,"Читает/Сохраняет данные об устройствах")
+Rel(UserService,UserDatabase,"Читает/Сохраняет данные о пользователях")
+Rel(TelemetryService,TelemetryDatabase,"Читает/Сохраняет данные о телеметрии")
+
+Rel(TelemetryService,kafka,"Запрашивает данные о температуре")
+Rel(kafka,sensors,"Отправляет запросы на данные от датчиков")
+Rel(ModuleService,api,"Управляет устройствами внешнего производителя")
+
+@enduml
