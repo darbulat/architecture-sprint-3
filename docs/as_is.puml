@@ -1,0 +1,23 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+title Диаграма контектса системы
+
+top to bottom direction
+
+
+Person(user, "Пользователь", "Управляет отоплением в доме")
+Person(admin, "Администратор", "Добавляет устройства и датчики в доме")
+System(smartHome, "Smart Home", "Монолитное приложения для упраления отоплением в доме")
+
+System_Ext(sensor, "Датчик", "Измеряет температуру окружающей среды")
+System_Ext(device, "Устройство", "Обогреватель")
+
+Rel(user, smartHome, "Uses the system", HTTP)
+Rel(admin,smartHome,"Manages the system", HTTP)
+Rel(smartHome,sensor,"Запрашивает температуру", HTTP)
+Rel(smartHome,device,"Включает и отключает устройство", HTTP)
+
+
+@enduml
+

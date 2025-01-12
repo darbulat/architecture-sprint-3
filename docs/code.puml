@@ -1,0 +1,26 @@
+@startuml
+title Device Management Code Diagram
+
+class ApiController {
+  +handleRequest()
+}
+
+class CommandHandler {
+  +processCommand()
+}
+
+class DeviceStateManager {
+  +updateState()
+  +getState()
+}
+
+class DeviceRepository {
+  +saveDeviceData()
+  +getDeviceData()
+}
+
+ApiController --> CommandHandler : uses
+CommandHandler --> DeviceStateManager : updates
+DeviceStateManager --> DeviceRepository : reads/writes
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+entity User {
+  * id : Long
+  --
+  * name : String
+  * email : String
+}
+
+entity House {
+  * id : Long
+  --
+  * name: String
+  * address : String
+  * user_id : Long
+}
+
+entity Device {
+  * id : Long
+  --
+  * type_id : Long
+  * house_id : Long
+  * module_id : Long
+  * serial_number : String
+  * status : String
+}
+
+entity DeviceType {
+  * id : Long
+  --
+  * name : String
+  * description : String
+}
+
+entity Module {
+  * id : Long
+  --
+  * name : String
+}
+
+entity TelemetryData {
+  * id : Long
+  --
+  * device_id : Long
+  * timestamp : DateTime
+  * data : jsonb
+}
+
+User ||--o{ House : "owns"
+House ||--o{ Device : "contains"
+Device ||--o{ TelemetryData : "generates"
+Module ||--o{ Device : "contains"
+DeviceType ||--o{ Device : "categorizes"
+@enduml

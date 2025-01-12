@@ -1,0 +1,257 @@
+openapi: 3.0.0
+info:
+  title: Smart Home API
+  version: 1.0.0
+  description: API for managing devices and telemetry in a smart home system.
+tags:
+  - name: telemetry
+  - name: device
+
+paths:
+  /devices:
+    get:
+      summary: Get All Devices
+      description: Returns a list of all devices in the system.
+      tags:
+        - device
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    serial_number:
+                      type: string
+        '500':
+          description: Server error
+
+  /devices/{device_id}:
+    get:
+      summary: Get Device Information
+      description: Returns detailed information about a specific device by its ID.
+      tags:
+        - device
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  status:
+                    type: string
+                  serial_number:
+                    type: string
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
+
+    post:
+      summary: Add a New Device
+      description: Adds a new device to the system.
+      tags:
+        - device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                type:
+                  type: string
+                status:
+                  type: string
+                serial_number:
+                  type: string
+              required:
+                - id
+                - type
+      responses:
+        '201':
+          description: Device created successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+    delete:
+      summary: Delete a Device
+      description: Deletes a specific device from the system.
+      tags:
+        - device
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Device deleted successfully
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
+
+  /devices/{device_id}/status:
+    put:
+      summary: Update Device Status
+      description: Allows changing the device status (e.g., turn on/off).
+      tags:
+        - device
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Status updated successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
+
+  /devices/{device_id}/commands:
+    post:
+      summary: Send Command to Device
+      description: Sends a command to the device (e.g., "set temperature to 22 degrees").
+      tags:
+        - device
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                parameters:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Command sent successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
+
+  /devices/{device_id}/telemetry/latest:
+    get:
+      summary: Get Latest Telemetry Data
+      description: Returns the latest telemetry data for the device.
+      tags:
+        - telemetry
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                  data:
+                    type: object
+                    additionalProperties: true
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
+
+  /devices/{device_id}/telemetry:
+    get:
+      summary: Get Historical Telemetry Data
+      description: Returns historical telemetry data for the device over a specified period.
+      tags:
+        - telemetry
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                    data:
+                      type: object
+                      additionalProperties: true
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
+        '500':
+          description: Server error
